@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="financeNavigation">
+
+    <hr class="my-4">
+    </p>
+
+    <ul class="list-group mb-3">
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/finance}" th:method="get">
+                <input class="block" type="submit" value="Оклады">
+                <input type="hidden" name="page" value="0">
+            </form>
+        </li>
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/finance/history}" th:method="get">
+                <input class="block" type="submit" value="История">
+                <input type="hidden" name="page" value="0">
+            </form>
+        </li>
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/finance/salary}" th:method="get">
+                <input class="block" type="submit" value="Выдача зарплаты">
+                <input type="hidden" name="page" value="0">
+            </form>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="adminNavigation">
+    <h4 class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-primary">Навигация</span>
+        <span class="badge bg-primary rounded-pill">3</span>
+    </h4>
+    <ul class="list-group mb-3">
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/user/menu}" th:method="get">
+                <input class="block" type="submit" value="Информация об аккаунте">
+            </form>
+        </li>
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/project}" th:method="get">
+                <input class="block" type="submit" value="Проекты">
+                <input type="hidden" name="page" value="0">
+            </form>
+        </li>
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/user}" th:method="get">
+                <input class="block" type="submit" value="Сотрудники">
+                <input type="hidden" name="page" value="0">
+            </form>
+        </li>
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/finance}" th:method="get">
+                <input class="block" type="submit" value="Финансы">
+                <input type="hidden" name="page" value="0">
+            </form>
+        </li>
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/user/new}" th:method="get">
+                <input class="block" type="submit" value="Регистрация сотрудников">
+            </form>
+        </li>
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/account/changePassword}" th:method="get">
+                <input class="block" type="submit" value="Сменить пароль">
+            </form>
+        </li>
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/logout}" th:method="post">
+                <input class="block" type="submit" value="Выход">
+            </form>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

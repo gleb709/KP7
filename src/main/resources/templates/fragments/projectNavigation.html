@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="projectNavigation">
+
+    <hr class="my-4">
+    </p>
+
+    <ul class="list-group mb-3">
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/project}" th:method="get">
+                <input class="block" type="submit" value="Список проектов">
+                <input type="hidden" name="page" value="0">
+            </form>
+        </li>
+        <li class="form list-group-item d-flex justify-content-between lh-sm">
+            <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                  th:action="@{/project/new}" th:method="get">
+                <input class="block" type="submit" value="Добавить проект">
+            </form>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

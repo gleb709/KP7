@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:fragment="userNavigation">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-primary">Навигация</span>
+            <span class="badge bg-primary rounded-pill">3</span>
+        </h4>
+        <div class="list-group mb-3">
+            <div class="form list-group-item d-flex justify-content-between lh-sm">
+                <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                      th:action="@{/user/menu}" th:method="get">
+                    <input class="block" type="submit" value="Информация об аккаунте">
+                </form>
+            </div>
+            <div class="form list-group-item d-flex justify-content-between lh-sm">
+                <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                      th:action="@{/user/project/{id}(id=${user.id})}" th:method="get">
+                    <input class="block" type="submit" value="Проекты">
+                </form>
+            </div>
+            <div class="form list-group-item d-flex justify-content-between lh-sm">
+                <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                      th:action="@{/finance/{id}(id=${user.finance.id})}" th:method="get">
+                    <input class="block" type="submit" value="Финансы">
+                </form>
+            </div>
+            <div class="form list-group-item d-flex justify-content-between lh-sm">
+                <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                      th:action="@{/account/changePassword}" th:method="get">
+                    <input class="block" type="submit" value="Сменить пароль">
+                </form>
+            </div>
+            <div class="form list-group-item d-flex justify-content-between lh-sm">
+                <form style="display: block;
+                                     width: 100%;
+                                     border: none;"
+                      th:action="@{/logout}" th:method="post">
+                    <input class="block" type="submit" value="Выход">
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
