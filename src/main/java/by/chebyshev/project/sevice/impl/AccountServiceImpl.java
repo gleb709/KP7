@@ -4,7 +4,6 @@ import by.chebyshev.project.entity.Account;
 import by.chebyshev.project.repository.AccountRepository;
 import by.chebyshev.project.sevice.AccountService;
 import by.chebyshev.project.util.PasswordEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<Account> findAccountById(Long id) {
+    public Optional<Account> findById(Long id) {
         return accountRepository.findAccountById(id);
     }
 

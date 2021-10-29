@@ -7,10 +7,11 @@ import by.chebyshev.project.repository.FinanceHistoryRepository;
 import by.chebyshev.project.repository.FinanceRepository;
 import by.chebyshev.project.repository.UserRepository;
 import by.chebyshev.project.sevice.FinanceService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,9 +41,12 @@ public class FinanceServiceImpl implements FinanceService {
 
     @Override
     public void transaction(FinanceHistory financeHistory, Long id) {
-        financeHistory.setFinance(financeRepository.findById(id).get());
-        financeHistory.setDate(new Date());
-        financeHistoryRepository.save(financeHistory);
+        Optional<Finance> financeCheck = financeRepository.findById(id);
+        if(financeCheck.isPresent()){
+            financeHistory.setFinance(financeCheck.get());
+            financeHistory.setDate(new Date());
+            financeHistoryRepository.save(financeHistory);
+        }
     }
 
     @Override
@@ -66,17 +70,22 @@ public class FinanceServiceImpl implements FinanceService {
     }
 
     @Override
-    public List<FinanceHistory> findAllFinanceHistory() {
-        return financeHistoryRepository.findAll();
+    public Page<FinanceHistory> findAllFinanceHistory(Pageable pageable) {
+        return financeHistoryRepository.findAll(pageable);
     }
 
     @Override
-    public List<FinanceHistory> findUserFinanceHistoryById(Long id) {
+    public Page<FinanceHistory> findUserFinanceHistoryById(Long id, Pageable pageable) {
         Finance finance = financeRepository.findFinanceByUserId(id);
-        return financeHistoryRepository.findFinanceHistoryByFinanceId(finance.getId());
+        return financeHistoryRepository.findFinanceHistoryByFinanceId(finance.getId(), pageable);
     }
 
-    public List<User> findAllUserFinance(){
-        return userRepository.findAll();
+    public Page<User> findAllUserFinance(Pageable pageable){
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public Optional<Finance> findById(Long id) {
+        return financeRepository.findById(id);
     }
 }

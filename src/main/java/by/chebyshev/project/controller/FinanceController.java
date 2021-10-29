@@ -4,19 +4,22 @@ import by.chebyshev.project.entity.Finance;
 import by.chebyshev.project.entity.FinanceHistory;
 import by.chebyshev.project.entity.User;
 import by.chebyshev.project.sevice.impl.FinanceServiceImpl;
-import by.chebyshev.project.util.Pagination;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/finance")
 public class FinanceController {
+
+    private static final int DEFAULT_SIZE = 10;
     private final FinanceServiceImpl financeService;
 
     public FinanceController(FinanceServiceImpl financeService) {
@@ -24,12 +27,13 @@ public class FinanceController {
     }
 
     @GetMapping
-    public String finance(@RequestParam("page") int page, Pagination<User> pagination, Model model) {
-        List<User> list = financeService.findAllUserFinance();
-        model.addAttribute("users", pagination.pageSelect(page, list));
-        model.addAttribute("page", page);
-        model.addAttribute("pageCount", pagination.pageCount(list));
-        return Page.FINANCE_LIST;
+    public String finance(@RequestParam(value = "page", required = false, defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, DEFAULT_SIZE);
+        Page<User> list = financeService.findAllUserFinance(pageable);
+        model.addAttribute("users", list.getContent());
+        model.addAttribute("page", list.getNumber());
+        model.addAttribute("pageCount", list.getTotalPages()-1);
+        return RedirectPage.FINANCE_LIST;
     }
 
     @GetMapping("/{id}")
@@ -41,7 +45,7 @@ public class FinanceController {
         if(userFinance.isPresent() && finance.isPresent()){
             model.addAttribute("user", finance.get());
             model.addAttribute("finance", userFinance.get());
-            rotation = Page.USER_FINANCE;
+            rotation = RedirectPage.USER_FINANCE;
         }
         return rotation;
     }
@@ -52,47 +56,47 @@ public class FinanceController {
         Optional<User> accountCheck = financeService.findUserFinanceByUsername(userDetails.getUsername());
         Optional<Finance> financeCheck = financeService.findUserFinance(id);
 
-        String rotation = Page.USER_FINANCE;
+        String rotation = RedirectPage.USER_FINANCE;
         if(financeCheck.isPresent() && accountCheck.isPresent()){
-            rotation = Page.UPDATE_FINANCE;
+            rotation = RedirectPage.UPDATE_FINANCE;
             model.addAttribute("finance", financeCheck.get());
         }
         return rotation;
     }
 
     @GetMapping("/history")
-    public String history(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-                          Pagination<FinanceHistory> pagination, Model model){
-        List<FinanceHistory> list = financeService.findAllFinanceHistory();
-        model.addAttribute("financeHistory", pagination.pageSelect(page, list));
-        model.addAttribute("page", page);
-        model.addAttribute("pageCount", pagination.pageCount(list));
-        return Page.FINANCE_HISTORY;
+    public String history(@RequestParam(value = "page", required = false, defaultValue = "0") int page, Model model){
+        Pageable pageable = PageRequest.of(page, DEFAULT_SIZE);
+        Page<FinanceHistory> list = financeService.findAllFinanceHistory(pageable);
+        model.addAttribute("financeHistory", list.getContent());
+        model.addAttribute("page", list.getNumber());
+        model.addAttribute("pageCount", list.getTotalPages()-1);
+        return RedirectPage.FINANCE_HISTORY;
     }
 
     @GetMapping("/history/{id}")
-    public String userFinanceHistory(@PathVariable("id") Long id, @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-                                     Pagination<FinanceHistory> pagination, Model model){
+    public String userFinanceHistory(@PathVariable("id") Long id, @RequestParam(value = "page", required = false, defaultValue = "0") int page, Model model){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> userFinance = financeService.findUserFinanceByUsername(userDetails.getUsername());
         if(userFinance.isPresent()) {
-            List<FinanceHistory> list = financeService.findUserFinanceHistoryById(id);
-            model.addAttribute("financeHistory", pagination.pageSelect(page, list));
-            model.addAttribute("page", page);
-            model.addAttribute("pageCount", pagination.pageCount(list));
+            Pageable pageable = PageRequest.of(page, DEFAULT_SIZE);
+            Page<FinanceHistory> list = financeService.findUserFinanceHistoryById(id, pageable);
+            model.addAttribute("financeHistory", list.getContent());
+            model.addAttribute("page", list.getNumber());
+            model.addAttribute("pageCount", list.getTotalPages()-1);
             model.addAttribute("user", userFinance.get());
         }
-        return Page.USER_FINANCE_HISTORY;
+        return RedirectPage.USER_FINANCE_HISTORY;
     }
 
     @GetMapping("/salary")
-    public String salary(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-                         Pagination<User> pagination, Model model) {
-        List<User> list = financeService.findAllUserFinance();
-        model.addAttribute("users", pagination.pageSelect(page, list));
-        model.addAttribute("page", page);
-        model.addAttribute("pageCount", pagination.pageCount(list));
-        return Page.SALARY_LIST;
+    public String salary(@RequestParam(value = "page", required = false, defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, DEFAULT_SIZE);
+        Page<User> list = financeService.findAllUserFinance(pageable);
+        model.addAttribute("users", list.getContent());
+        model.addAttribute("page", list.getNumber());
+        model.addAttribute("pageCount", list.getTotalPages()-1);
+        return RedirectPage.SALARY_LIST;
     }
 
     @GetMapping("/salary/{id}")
@@ -103,7 +107,7 @@ public class FinanceController {
             financeHistory.setSalary(financeService.userSalary(userFinance.get()));
             model.addAttribute("finance", userFinance.get());
             model.addAttribute("financeHistory", financeHistory);
-            rotation = Page.TRANSACTION;
+            rotation = RedirectPage.TRANSACTION;
         }
         return rotation;
     }
@@ -111,7 +115,7 @@ public class FinanceController {
     @PostMapping("/transaction/{id}")
     public String transaction(@PathVariable("id") Long id, FinanceHistory financeHistory){
         financeService.transaction(financeHistory, id);
-        return Redirect.SALARY_LIST + Page.FIRST_PAGE;
+        return Redirect.SALARY_LIST + RedirectPage.FIRST_PAGE;
     }
 
     @PostMapping("/update")

@@ -2,20 +2,22 @@ package by.chebyshev.project.controller;
 
 import by.chebyshev.project.entity.Project;
 import by.chebyshev.project.sevice.ProjectService;
-import by.chebyshev.project.util.Pagination;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/project")
 public class ProjectController {
 
+    private static final int DEFAULT_SIZE = 10;
     private final ProjectService projectService;
 
     public ProjectController(ProjectService projectService) {
@@ -23,21 +25,21 @@ public class ProjectController {
     }
 
     @GetMapping
-    public String projects(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-                           Pagination<Project> pagination, Model model) {
-        List<Project> list = projectService.findAll();
-        model.addAttribute("projects", pagination.pageSelect(page, list));
-        model.addAttribute("page", page);
-        model.addAttribute("pageCount", pagination.pageCount(list));
-        return Page.PROJECT_LIST;
+    public String projects(@RequestParam(value = "page", required = false, defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, DEFAULT_SIZE);
+        Page<Project> list = projectService.findAll(pageable);
+        model.addAttribute("projects", list.getContent());
+        model.addAttribute("page", list.getNumber());
+        model.addAttribute("pageCount", list.getTotalPages()-1);
+        return RedirectPage.PROJECT_LIST;
     }
 
     @GetMapping("/{id}")
     public String project(@PathVariable("id") Long id, Model model){
-        Optional<Project> project = projectService.findProjectById(id);
-        String rotation = Page.PROJECT_LIST;
+        Optional<Project> project = projectService.findById(id);
+        String rotation = RedirectPage.PROJECT_LIST;
         if(project.isPresent()){
-            rotation = Page.PROJECT_INFO;
+            rotation = RedirectPage.PROJECT_INFO;
 
             model.addAttribute("project", project.get());
         }
@@ -46,12 +48,12 @@ public class ProjectController {
 
     @GetMapping("/new")
     public String addProject(@ModelAttribute("project") Project project){
-       return Page.NEW_PROJECT;
+       return RedirectPage.NEW_PROJECT;
     }
 
     @PostMapping
     public String saveProject(@Valid Project project, BindingResult bindingResult){
-        String rotation = Page.NEW_PROJECT;
+        String rotation = RedirectPage.NEW_PROJECT;
         if(!bindingResult.hasErrors()){
             rotation = Redirect.PROJECT_LIST;
             projectService.saveProject(project);

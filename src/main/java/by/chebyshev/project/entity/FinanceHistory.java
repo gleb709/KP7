@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-public class FinanceHistory {
+public class FinanceHistory{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

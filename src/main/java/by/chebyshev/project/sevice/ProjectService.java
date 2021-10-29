@@ -1,13 +1,11 @@
 package by.chebyshev.project.sevice;
 
 import by.chebyshev.project.entity.Project;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface ProjectService {
-    List<Project> findAll();
-    Optional<Project> findProjectById(Long id);
+public interface ProjectService extends BaseService<Project>{
+    Page<Project> findAll(Pageable pageable);
     void saveProject(Project project);
 
 }

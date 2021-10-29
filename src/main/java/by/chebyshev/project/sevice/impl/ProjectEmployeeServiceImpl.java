@@ -5,6 +5,8 @@ import by.chebyshev.project.entity.ProjectEmployee;
 import by.chebyshev.project.entity.User;
 import by.chebyshev.project.repository.ProjectEmployeeRepository;
 import by.chebyshev.project.sevice.ProjectEmployeeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +28,7 @@ import java.util.Optional;
     public List<User> findNotProjectUsers(Long id) {
         List<User> userList = userService.findAllUsers();
         List<User> notProjectUsers = userService.findAllUsers();
-        Optional<Project> project = projectService.findProjectById(id);
+        Optional<Project> project = projectService.findById(id);
         if(project.isPresent()) {
             for (User user : userList) {
                 for (ProjectEmployee employee: project.get().getProjectEmployee()) {
@@ -40,18 +42,23 @@ import java.util.Optional;
     }
 
     @Override
+    public Page<ProjectEmployee> findProjectEmployeeByProjectId(Long id, Pageable pageable) {
+        return projectEmployeeRepository.findProjectEmployeeByProjectId(id, pageable);
+    }
+
+    @Override
     public List<ProjectEmployee> findProjectEmployeeByProjectId(Long id) {
         return projectEmployeeRepository.findProjectEmployeeByProjectId(id);
     }
 
     @Override
     public Optional<Project> findProjectById(Long id) {
-        return projectService.findProjectById(id);
+        return projectService.findById(id);
     }
 
     @Override
     public Optional<User> findUserById(Long id) {
-        return userService.findUserById(id);
+        return userService.findById(id);
     }
 
     @Override
@@ -60,7 +67,7 @@ import java.util.Optional;
     }
 
     @Override
-    public Optional<ProjectEmployee> findEmployeeById(Long id) {
+    public Optional<ProjectEmployee> findById(Long id) {
         return projectEmployeeRepository.findById(id);
     }
 
@@ -77,7 +84,7 @@ import java.util.Optional;
 
     @Override
     public void deleteEmployee(Long id) {
-        Optional<ProjectEmployee> employee = findEmployeeById(id);
+        Optional<ProjectEmployee> employee = findById(id);
         if(employee.isPresent()){
             List<ProjectEmployee> employees = findProjectEmployeeByProjectId(employee.get().getProject().getId());
             if(employees.size() > 1 && employees.get(0).equals(employee.get())) {

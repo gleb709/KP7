@@ -1,6 +1,6 @@
 package by.chebyshev.project.controller;
 
-public class Page {
+public class RedirectPage {
     public static final String USER_INFO = "userinfo";
     public static final String USER_MENU = "userMenu";
     public static final String USER_LIST = "userList";

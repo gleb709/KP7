@@ -5,18 +5,25 @@ import by.chebyshev.project.entity.ProjectEmployee;
 import by.chebyshev.project.entity.User;
 import by.chebyshev.project.sevice.impl.ProjectEmployeeServiceImpl;
 import by.chebyshev.project.util.Pagination;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/employee")
 public class ProjectEmployeeController {
+
+    private static final int DEFAULT_SIZE = 10;
     private final ProjectEmployeeServiceImpl projectEmployeeService;
 
     public ProjectEmployeeController(ProjectEmployeeServiceImpl projectEmployeeService) {
@@ -24,25 +31,29 @@ public class ProjectEmployeeController {
     }
 
     @GetMapping("/add/{id}")
-    public String addEmployee(@PathVariable("id") Long id, Model model){
+    public String addEmployee(@PathVariable("id") Long id,
+                              @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                              Pagination<User> pagination, Model model){
         Optional<Project> project = projectEmployeeService.findProjectById(id);
         List<User> userList = projectEmployeeService.findNotProjectUsers(id);
         String rotation = Redirect.PROJECT_LIST + "/" + id;
         if(project.isPresent()){
             model.addAttribute("project", project.get());
-            model.addAttribute("users", userList);
-            rotation = Page.ADD_EMPLOYEE;
+            model.addAttribute("users", pagination.pageSelect(page, userList));
+            model.addAttribute("page", page);
+            model.addAttribute("pageCount", pagination.pageCount(userList));
+            rotation = RedirectPage.ADD_EMPLOYEE;
         }
         return rotation;
     }
 
     @PostMapping("/add")
     public String add(@RequestParam("projectId") Long projectId, @RequestParam("userId") Long userId,
-                      ProjectEmployee projectEmployee, Model model){
+                      @Valid ProjectEmployee projectEmployee, BindingResult bindingResult, Model model){
         Optional<Project> projectCheck = projectEmployeeService.findProjectById(projectId);
         Optional<User> userCheck = projectEmployeeService.findUserById(userId);
-        String rotation = Page.ADD_EMPLOYEE;
-        if(projectCheck.isPresent() && userCheck.isPresent()) {
+        String rotation = RedirectPage.ADD_EMPLOYEE;
+        if(projectCheck.isPresent() && userCheck.isPresent() && !bindingResult.hasErrors()) {
             projectEmployee.setProject(projectCheck.get());
             projectEmployee.setUser(userCheck.get());
             projectEmployeeService.addEmployee(projectEmployee);
@@ -54,19 +65,19 @@ public class ProjectEmployeeController {
     }
 
     @GetMapping("/{id}")
-    public String projectEmployee(@PathVariable("id") Long id, @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-                                  Pagination<ProjectEmployee> pagination, Model model){
-        List<ProjectEmployee> projectEmployees = projectEmployeeService.findProjectEmployeeByProjectId(id);
+    public String projectEmployee(@PathVariable("id") Long id, @RequestParam(value = "page", required = false, defaultValue = "0") int page, Model model){
+        Pageable pageable = PageRequest.of(page, DEFAULT_SIZE);
+        Page<ProjectEmployee> projectEmployees = projectEmployeeService.findProjectEmployeeByProjectId(id, pageable);
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> user = projectEmployeeService.findUserByUsername(userDetails.getUsername());
         Optional<Project> project = projectEmployeeService.findProjectById(id);
-        String rotation = Page.PROJECT_EMPLOYEE;
+        String rotation = RedirectPage.PROJECT_EMPLOYEE;
         if(project.isPresent() && user.isPresent()) {
             model.addAttribute("user", user.get());
             model.addAttribute("project", project.get());
-            model.addAttribute("employees", pagination.pageSelect(page, projectEmployees));
-            model.addAttribute("page", page);
-            model.addAttribute("pageCount", pagination.pageCount(projectEmployees));
+            model.addAttribute("employees", projectEmployees.getContent());
+            model.addAttribute("page", projectEmployees.getNumber());
+            model.addAttribute("pageCount", projectEmployees.getTotalPages()-1);
         }
         return rotation;
     }

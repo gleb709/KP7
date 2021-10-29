@@ -4,12 +4,13 @@ import by.chebyshev.project.entity.User;
 import by.chebyshev.project.repository.UserRepository;
 import by.chebyshev.project.sevice.UserService;
 import by.chebyshev.project.util.PasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Optional<User> findUserById(Long id) {
+    public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -43,6 +44,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public Optional<User> findUserByPhone(String phone) {
         return userRepository.findUserByPhone(phone);
+    }
+
+    @Override
+    public Page<User> findAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override

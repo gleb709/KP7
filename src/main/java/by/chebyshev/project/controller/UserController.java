@@ -4,13 +4,17 @@ import by.chebyshev.project.entity.Account;
 import by.chebyshev.project.entity.Finance;
 import by.chebyshev.project.entity.User;
 import by.chebyshev.project.sevice.UserService;
-import by.chebyshev.project.util.Pagination;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,33 +22,33 @@ import java.util.Optional;
 @RequestMapping("/user")
 public class UserController {
 
+    private static final int DEFAULT_SIZE = 10;
     private final UserService userService;
-    private final Pagination<User> pagination;
 
-    public UserController(UserService userService, Pagination<User> pagination) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.pagination = pagination;
     }
 
     @GetMapping
     public String userList(@RequestParam(value = "page", required = false, defaultValue = "0") int page, Model model){
-        List<User> list = userService.findAllUsers();
-        model.addAttribute("users", pagination.pageSelect(page, list));
-        model.addAttribute("page", page);
-        model.addAttribute("pageCount", pagination.pageCount(list));
-        return Page.USER_LIST;
+        Pageable pageable = PageRequest.of(page, DEFAULT_SIZE);
+        Page<User> list = userService.findAllUsers(pageable);
+        model.addAttribute("users", list.getContent());
+        model.addAttribute("page", list.getNumber());
+        model.addAttribute("pageCount", list.getTotalPages()-1);
+        return RedirectPage.USER_LIST;
     }
 
     @GetMapping("/{id}")
     public String userInfo(@PathVariable("id") Long id, Model model){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> accountCheck = userService.findUserByUsername(userDetails.getUsername());
-        Optional<User> userCheck = userService.findUserById(id);
+        Optional<User> userCheck = userService.findById(id);
         if(accountCheck.isPresent() && userCheck.isPresent()) {
             model.addAttribute("role", accountCheck.get().getAccount().getRole());
             model.addAttribute("user", userCheck.get());
         }
-        return Page.USER_INFO;
+        return RedirectPage.USER_INFO;
     }
 
     @GetMapping("/new")
@@ -53,18 +57,18 @@ public class UserController {
         user.setAccount(account);
         user.setFinance(finance);
         model.addAttribute("user", user);
-        return Page.SIGN_UP;
+        return RedirectPage.SIGN_UP;
     }
 
     @PostMapping("/signUp")
-    public String addUser(User user, Model model) {
+    public String addUser(@Valid User user, BindingResult bindingResult, Model model) {
         String rotation = Redirect.USER_MENU;
         List<String> errors = userService.addUser(user);
-        if (!errors.isEmpty()) {
+        if (!errors.isEmpty() && !bindingResult.hasErrors()) {
             for (String error: errors) {
                 model.addAttribute(error, true);
             }
-            rotation = Page.SIGN_UP;
+            rotation = RedirectPage.SIGN_UP;
         }
         return rotation;
     }
@@ -73,10 +77,10 @@ public class UserController {
     public String updateUser(@PathVariable("id") Long id, Model model){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> accountCheck = userService.findUserByUsername(userDetails.getUsername());
-        Optional<User> userCheck = userService.findUserById(id);
-        String rotation = Page.USER_MENU;
+        Optional<User> userCheck = userService.findById(id);
+        String rotation = RedirectPage.USER_MENU;
         if(userCheck.isPresent() && accountCheck.isPresent()){
-            rotation = Page.UPDATE_USER;
+            rotation = RedirectPage.UPDATE_USER;
             model.addAttribute("role", accountCheck.get().getAccount().getRole());
             model.addAttribute("user", userCheck.get());
         }
@@ -84,14 +88,14 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public String updateUser(User user, Model model){
+    public String updateUser(@Valid User user, BindingResult bindingResult, Model model){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> userCheck = userService.findUserByUsername(userDetails.getUsername());
-        String rotation = Page.UPDATE_USER;
+        String rotation = RedirectPage.UPDATE_USER;
         if(userCheck.isPresent()){
             List<String> errors = userService.updateUser(user);
             model.addAttribute("user", userCheck.get());
-            if (errors.isEmpty()) {
+            if (errors.isEmpty() && !bindingResult.hasErrors()) {
                 rotation = Redirect.USER_MENU;
                 if(!userCheck.get().getAccount().getUsername().equals(user.getAccount().getUsername())){
                     rotation = Redirect.USER_LIST;
@@ -107,9 +111,9 @@ public class UserController {
 
     @GetMapping("/project/{id}")
     public String userProject(@PathVariable("id") Long id, Model model){
-        Optional<User> user = userService.findUserById(id);
+        Optional<User> user = userService.findById(id);
         user.ifPresent(value -> model.addAttribute("user", value));
-        return Page.USER_PROJECTS;
+        return RedirectPage.USER_PROJECTS;
     }
 
     @GetMapping("/menu")
@@ -117,7 +121,7 @@ public class UserController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> user = userService.findUserByUsername(userDetails.getUsername());
         user.ifPresent(value -> model.addAttribute("user", value));
-        return Page.USER_MENU;
+        return RedirectPage.USER_MENU;
     }
 
 }

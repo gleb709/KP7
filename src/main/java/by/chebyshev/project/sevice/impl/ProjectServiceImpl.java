@@ -1,34 +1,30 @@
 package by.chebyshev.project.sevice.impl;
 
 import by.chebyshev.project.entity.Project;
-import by.chebyshev.project.entity.ProjectEmployee;
-import by.chebyshev.project.entity.User;
 import by.chebyshev.project.repository.ProjectRepository;
 import by.chebyshev.project.sevice.ProjectService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final UserServiceImpl userService;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, UserServiceImpl userService) {
+    public ProjectServiceImpl(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
-        this.userService = userService;
     }
 
     @Override
-    public List<Project> findAll() {
-        return projectRepository.findAll();
+    public Page<Project> findAll(Pageable pageable) {
+        return projectRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<Project> findProjectById(Long id) {
+    public Optional<Project> findById(Long id) {
         return projectRepository.findProjectById(id);
     }
 

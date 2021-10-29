@@ -5,9 +5,8 @@ import by.chebyshev.project.entity.Account;
 import java.util.List;
 import java.util.Optional;
 
-public interface AccountService {
+public interface AccountService extends BaseService<Account>{
     Optional<Account> findAccountByUsername(String username);
-    Optional<Account> findAccountById(Long id);
     List<String> changePassword(Account account);
     void updateAccount(Account account);
 }
