@@ -1,4 +1,4 @@
-package by.chebyshev.project.sevice;
+package by.chebyshev.project.service;
 
 import java.util.Optional;
 

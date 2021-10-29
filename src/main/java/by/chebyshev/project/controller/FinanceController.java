@@ -3,7 +3,7 @@ package by.chebyshev.project.controller;
 import by.chebyshev.project.entity.Finance;
 import by.chebyshev.project.entity.FinanceHistory;
 import by.chebyshev.project.entity.User;
-import by.chebyshev.project.sevice.impl.FinanceServiceImpl;
+import by.chebyshev.project.service.impl.FinanceServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

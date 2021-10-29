@@ -1,7 +1,7 @@
 package by.chebyshev.project.controller;
 
 import by.chebyshev.project.entity.Project;
-import by.chebyshev.project.sevice.ProjectService;
+import by.chebyshev.project.service.ProjectService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

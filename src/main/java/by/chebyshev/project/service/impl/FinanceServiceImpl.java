@@ -1,4 +1,4 @@
-package by.chebyshev.project.sevice.impl;
+package by.chebyshev.project.service.impl;
 
 import by.chebyshev.project.entity.Finance;
 import by.chebyshev.project.entity.FinanceHistory;
@@ -6,7 +6,7 @@ import by.chebyshev.project.entity.User;
 import by.chebyshev.project.repository.FinanceHistoryRepository;
 import by.chebyshev.project.repository.FinanceRepository;
 import by.chebyshev.project.repository.UserRepository;
-import by.chebyshev.project.sevice.FinanceService;
+import by.chebyshev.project.service.FinanceService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

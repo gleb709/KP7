@@ -1,8 +1,8 @@
-package by.chebyshev.project.sevice.impl;
+package by.chebyshev.project.service.impl;
 
 import by.chebyshev.project.entity.Account;
 import by.chebyshev.project.repository.AccountRepository;
-import by.chebyshev.project.sevice.AccountService;
+import by.chebyshev.project.service.AccountService;
 import by.chebyshev.project.util.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package by.chebyshev.project.controller;
 
 import by.chebyshev.project.entity.Account;
-import by.chebyshev.project.sevice.impl.AccountServiceImpl;
+import by.chebyshev.project.service.impl.AccountServiceImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;

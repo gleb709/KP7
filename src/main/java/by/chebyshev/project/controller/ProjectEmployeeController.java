@@ -3,7 +3,7 @@ package by.chebyshev.project.controller;
 import by.chebyshev.project.entity.Project;
 import by.chebyshev.project.entity.ProjectEmployee;
 import by.chebyshev.project.entity.User;
-import by.chebyshev.project.sevice.impl.ProjectEmployeeServiceImpl;
+import by.chebyshev.project.service.impl.ProjectEmployeeServiceImpl;
 import by.chebyshev.project.util.Pagination;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

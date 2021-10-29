@@ -1,8 +1,8 @@
-package by.chebyshev.project.sevice.impl;
+package by.chebyshev.project.service.impl;
 
 import by.chebyshev.project.entity.User;
 import by.chebyshev.project.repository.UserRepository;
-import by.chebyshev.project.sevice.UserService;
+import by.chebyshev.project.service.UserService;
 import by.chebyshev.project.util.PasswordEncoder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

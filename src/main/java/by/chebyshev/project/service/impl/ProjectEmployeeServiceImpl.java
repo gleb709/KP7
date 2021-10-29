@@ -1,10 +1,10 @@
-package by.chebyshev.project.sevice.impl;
+package by.chebyshev.project.service.impl;
 
 import by.chebyshev.project.entity.Project;
 import by.chebyshev.project.entity.ProjectEmployee;
 import by.chebyshev.project.entity.User;
 import by.chebyshev.project.repository.ProjectEmployeeRepository;
-import by.chebyshev.project.sevice.ProjectEmployeeService;
+import by.chebyshev.project.service.ProjectEmployeeService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

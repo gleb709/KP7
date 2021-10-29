@@ -1,4 +1,4 @@
-package by.chebyshev.project.sevice;
+package by.chebyshev.project.service;
 
 import by.chebyshev.project.entity.Project;
 import org.springframework.data.domain.Page;
